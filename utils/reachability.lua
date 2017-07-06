@@ -4,34 +4,34 @@
 -- Author: Jhosimar Arias
 --------------------------------------------------------------------------------
 
-	--[[
-		Compute the weighted adjacency matrix of the mutual reachability graph of a distance matrix.
-		
-		Input:
-			- data (NxM): Tensor representing the data to cluster.
-			- indices (K): Indices to consider from the data (useful when working with batches).
-			- min_samples: The number of points in a neighbourhood for a point to be considered a core point.
+--[[
+	Compute the weighted adjacency matrix of the mutual reachability graph of a distance matrix.
+	
+	Input:
+		- data (NxM): Tensor representing the data to cluster.
+		- indices (K): Indices to consider from the data (useful when working with batches).
+		- min_samples: The number of points in a neighbourhood for a point to be considered a core point.
 
-		Output:
-			- distances (NxN): Weighted adjacency matrix of the mutual reachability graph.
+	Output:
+		- distances (NxN): Weighted adjacency matrix of the mutual reachability graph.
 
-	--]]
-	function mutualReachability(data, indices, min_samples)
-		-- TODO: Improve KNN algorithm
-		local distances = calculateDistanceAllvsAll(data, indices)
-		local knn = calculateKNN(indices, distances, min_samples + 1) -- includes itself
-		local num_elements = #indices
-		for i=1,num_elements do
-			local current_index = indices[i]
-			local core_distance_i = knn[ current_index ][#knn[current_index]][2] -- knn distance
-			for j=1,num_elements do
-				local adjacent_index = indices[j]
-				local core_distance_j = knn[ adjacent_index ][#knn[adjacent_index]][2]
-				distances[i][j] = math.max(distances[i][j], math.max( core_distance_i, core_distance_j ))
-			end
+--]]
+function mutualReachability(data, indices, min_samples)
+	-- TODO: Improve KNN algorithm
+	local distances = calculateDistanceAllvsAll(data, indices)
+	local knn = calculateKNN(indices, distances, min_samples + 1) -- includes itself
+	local num_elements = #indices
+	for i=1,num_elements do
+		local current_index = indices[i]
+		local core_distance_i = knn[ current_index ][#knn[current_index]][2] -- knn distance
+		for j=1,num_elements do
+			local adjacent_index = indices[j]
+			local core_distance_j = knn[ adjacent_index ][#knn[adjacent_index]][2]
+			distances[i][j] = math.max(distances[i][j], math.max( core_distance_i, core_distance_j ))
 		end
-		return distances
 	end
+	return distances
+end
 
 
 --Calculate euclidean distance between two tensor
